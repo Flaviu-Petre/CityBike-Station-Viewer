@@ -17,7 +17,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://api.citybik.es/")
+            .baseUrl("https://api.citybik.es/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
