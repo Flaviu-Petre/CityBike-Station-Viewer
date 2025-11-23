@@ -3,6 +3,7 @@ package com.example.citybikeviewer.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.citybikeviewer.data.CityBikeRepository
+import com.example.citybikeviewer.data.model.Network
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,4 +34,13 @@ class CityBikeViewModel @Inject constructor(
             }
         }
     }
+
+    fun saveNetwork(network: Network) {
+        viewModelScope.launch {
+            repository.addToFavorites(network)
+            println("DEBUG: Saved ${network.name} to DB")
+        }
+    }
+
+    val favoriteNetworks = repository.getFavorites()
 }

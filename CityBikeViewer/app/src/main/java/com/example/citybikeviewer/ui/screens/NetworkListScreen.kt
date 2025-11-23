@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,35 +21,32 @@ import com.example.citybikeviewer.ui.CityBikeViewModel
 @Composable
 fun NetworkListScreen(
     viewModel: CityBikeViewModel = hiltViewModel(),
-    onNetworkClick: (String) -> Unit
+    onNetworkClick: (String) -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(title = { Text("CityBike Networks") })
+            CenterAlignedTopAppBar(
+                title = { Text("CityBike Networks") },
+                actions = {
+                    TextButton(onClick = onNavigateToFavorites) {
+                        Text("Favorites")
+                    }
+                }
+            )
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             when (val state = uiState) {
-                is CityBikeUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is CityBikeUiState.Error -> {
-                    Text(
-                        text = state.message,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
+                is CityBikeUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is CityBikeUiState.Error -> Text(text = state.message, modifier = Modifier.align(Alignment.Center))
                 is CityBikeUiState.Success -> {
                     NetworkList(
                         networks = state.networks,
-                        onItemClick = onNetworkClick
+                        onItemClick = onNetworkClick,
+                        onSaveClick = { network -> viewModel.saveNetwork(network) }
                     )
                 }
             }
@@ -58,11 +57,16 @@ fun NetworkListScreen(
 @Composable
 fun NetworkList(
     networks: List<com.example.citybikeviewer.data.model.Network>,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    onSaveClick: (com.example.citybikeviewer.data.model.Network) -> Unit
 ) {
     LazyColumn {
         items(networks) { network ->
-            NetworkItem(network = network, onClick = onItemClick)
+            NetworkItem(
+                network = network,
+                onClick = onItemClick,
+                onSaveClick = onSaveClick
+            )
         }
     }
 }
@@ -70,7 +74,8 @@ fun NetworkList(
 @Composable
 fun NetworkItem(
     network: com.example.citybikeviewer.data.model.Network,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    onSaveClick: (com.example.citybikeviewer.data.model.Network) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -79,16 +84,32 @@ fun NetworkItem(
             .clickable { onClick(network.id) },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = network.name,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "${network.location.city}, ${network.location.country}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = network.name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "${network.location.city}, ${network.location.country}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+
+            IconButton(onClick = { onSaveClick(network) }) {
+                Icon(
+                    imageVector = Icons.Default.FavoriteBorder,
+                    contentDescription = "Save to Favorites",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
