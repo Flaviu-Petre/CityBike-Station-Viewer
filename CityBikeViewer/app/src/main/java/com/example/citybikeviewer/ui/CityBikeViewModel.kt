@@ -3,11 +3,15 @@ package com.example.citybikeviewer.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.citybikeviewer.data.CityBikeRepository
+import com.example.citybikeviewer.data.local.FavoriteNetwork
 import com.example.citybikeviewer.data.model.Network
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,5 +46,36 @@ class CityBikeViewModel @Inject constructor(
         }
     }
 
+    fun deleteNetwork(network: FavoriteNetwork) {
+        viewModelScope.launch {
+            repository.removeFromFavorites(
+                networkId = network.id,
+                name = network.name,
+                city = network.city,
+                country = network.country
+            )
+        }
+    }
+
+    fun toggleFavorite(network: Network) {
+        viewModelScope.launch {
+            val isFavorite = favoriteIds.value.contains(network.id)
+            if (isFavorite) {
+                repository.removeFromFavorites(network.id, network.name, network.location.city, network.location.country)
+            } else {
+                repository.addToFavorites(network)
+            }
+        }
+    }
+
     val favoriteNetworks = repository.getFavorites()
+
+    val favoriteIds = repository.getFavorites()
+        .map { list -> list.map { it.id }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+
+
+
 }
+

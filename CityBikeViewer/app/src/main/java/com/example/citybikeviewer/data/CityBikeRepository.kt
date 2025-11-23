@@ -1,7 +1,9 @@
 package com.example.citybikeviewer.data
 
+import android.util.Log
 import com.example.citybikeviewer.data.local.FavoriteDao
 import com.example.citybikeviewer.data.local.FavoriteNetwork
+import com.example.citybikeviewer.data.model.Location
 import com.example.citybikeviewer.data.model.Network
 import com.example.citybikeviewer.data.remote.CityBikeApi
 import kotlinx.coroutines.flow.Flow
@@ -14,14 +16,14 @@ class CityBikeRepository @Inject constructor(
     // API Call
     suspend fun getNetworks(): List<Network> {
 
-        // return api.getNetworks().networks
+//        return api.getNetworks().networks
 
-        // Return a fake list to test the UI and Database
+//         Return a fake list to test the UI and Database
         return listOf(
             Network(
                 id = "velib",
                 name = "Velib (FAKE DATA)",
-                location = com.example.citybikeviewer.data.model.Location(
+                location = Location(
                     city = "Paris",
                     country = "FR",
                     latitude = 48.8566,
@@ -32,7 +34,7 @@ class CityBikeRepository @Inject constructor(
             Network(
                 id = "santander",
                 name = "Santander Cycles",
-                location = com.example.citybikeviewer.data.model.Location(
+                location = Location(
                     city = "London",
                     country = "UK",
                     latitude = 51.5074,
@@ -43,7 +45,7 @@ class CityBikeRepository @Inject constructor(
             Network(
                 id = "velo-antwerpen",
                 name = "Velo Antwerpen",
-                location = com.example.citybikeviewer.data.model.Location(
+                location = Location(
                     city = "Antwerp",
                     country = "BE",
                     latitude = 51.2194,

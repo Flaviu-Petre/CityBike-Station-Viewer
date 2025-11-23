@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.citybikeviewer.data.model.Network
 import com.example.citybikeviewer.ui.CityBikeUiState
 import com.example.citybikeviewer.ui.CityBikeViewModel
 
@@ -25,6 +27,7 @@ fun NetworkListScreen(
     onNavigateToFavorites: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
 
     Scaffold(
         topBar = {
@@ -45,8 +48,9 @@ fun NetworkListScreen(
                 is CityBikeUiState.Success -> {
                     NetworkList(
                         networks = state.networks,
+                        favoriteIds = favoriteIds,
                         onItemClick = onNetworkClick,
-                        onSaveClick = { network -> viewModel.saveNetwork(network) }
+                        onToggleFavorite = { network -> viewModel.toggleFavorite(network) }
                     )
                 }
             }
@@ -56,16 +60,20 @@ fun NetworkListScreen(
 
 @Composable
 fun NetworkList(
-    networks: List<com.example.citybikeviewer.data.model.Network>,
+    networks: List<Network>,
+    favoriteIds: Set<String>, // New Parameter
     onItemClick: (String) -> Unit,
-    onSaveClick: (com.example.citybikeviewer.data.model.Network) -> Unit
+    onToggleFavorite: (Network) -> Unit
 ) {
     LazyColumn {
         items(networks) { network ->
+            val isFav = favoriteIds.contains(network.id)
+
             NetworkItem(
                 network = network,
+                isFavorite = isFav,
                 onClick = onItemClick,
-                onSaveClick = onSaveClick
+                onSaveClick = onToggleFavorite
             )
         }
     }
@@ -73,9 +81,10 @@ fun NetworkList(
 
 @Composable
 fun NetworkItem(
-    network: com.example.citybikeviewer.data.model.Network,
+    network: Network,
+    isFavorite: Boolean,
     onClick: (String) -> Unit,
-    onSaveClick: (com.example.citybikeviewer.data.model.Network) -> Unit
+    onSaveClick: (Network) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -105,9 +114,9 @@ fun NetworkItem(
 
             IconButton(onClick = { onSaveClick(network) }) {
                 Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Save to Favorites",
-                    tint = MaterialTheme.colorScheme.primary
+                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Toggle Favorite",
+                    tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                 )
             }
         }

@@ -33,7 +33,10 @@ fun FavoritesScreen(
         } else {
             LazyColumn(modifier = Modifier.padding(paddingValues)) {
                 items(favorites) { network ->
-                    FavoriteItem(network)
+                    FavoriteItem(
+                        network,
+                        onDeleteClick = { viewModel.deleteNetwork(network) }
+                    )
                 }
             }
         }
@@ -41,7 +44,10 @@ fun FavoritesScreen(
 }
 
 @Composable
-fun FavoriteItem(network: FavoriteNetwork) {
+fun FavoriteItem(
+    network: FavoriteNetwork,
+    onDeleteClick: () -> Unit) {
+
     Card(
         modifier = Modifier.fillMaxWidth().padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
@@ -54,7 +60,13 @@ fun FavoriteItem(network: FavoriteNetwork) {
                 Text(text = network.name, style = MaterialTheme.typography.titleMedium)
                 Text(text = "${network.city}, ${network.country}", style = MaterialTheme.typography.bodySmall)
             }
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "Saved", tint = MaterialTheme.colorScheme.onTertiaryContainer)
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+            }
         }
     }
 }
