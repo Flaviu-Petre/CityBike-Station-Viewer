@@ -15,45 +15,7 @@ class CityBikeRepository @Inject constructor(
 ) {
     // API Call
     suspend fun getNetworks(): List<Network> {
-
-//        return api.getNetworks().networks
-
-//         Return a fake list to test the UI and Database
-        return listOf(
-            Network(
-                id = "velib",
-                name = "Velib (FAKE DATA)",
-                location = Location(
-                    city = "Paris",
-                    country = "FR",
-                    latitude = 48.8566,
-                    longitude = 2.3522
-                ),
-                href = "/v2/networks/velib"
-            ),
-            Network(
-                id = "santander",
-                name = "Santander Cycles",
-                location = Location(
-                    city = "London",
-                    country = "UK",
-                    latitude = 51.5074,
-                    longitude = -0.1278
-                ),
-                href = "/v2/networks/santander-cycles"
-            ),
-            Network(
-                id = "velo-antwerpen",
-                name = "Velo Antwerpen",
-                location = Location(
-                    city = "Antwerp",
-                    country = "BE",
-                    latitude = 51.2194,
-                    longitude = 4.4025
-                ),
-                href = "/v2/networks/velo-antwerpen"
-            )
-        )
+        return api.getNetworks().networks
     }
 
     fun getFavorites(): Flow<List<FavoriteNetwork>> = dao.getAllFavorites()
@@ -73,5 +35,5 @@ class CityBikeRepository @Inject constructor(
         dao.delete(toDelete)
     }
 
-    fun isFavorite(id: String): Flow<Boolean> = dao.isFavorite(id)
+//    fun isFavorite(id: String): Flow<Boolean> = dao.isFavorite(id)
 }
