@@ -16,7 +16,7 @@ import com.example.citybikeviewer.ui.CityBikeUiState
 import com.example.citybikeviewer.ui.CityBikeViewModel
 import androidx.compose.runtime.LaunchedEffect
 import com.example.citybikeviewer.ui.WeatherUiState
-//import coil.compose.AsyncImage
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,11 +89,11 @@ fun NetworkDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
 
-//                                AsyncImage(
-//                                    model = "https:${weather.weather.current.condition.icon}",
-//                                    contentDescription = null,
-//                                    modifier = Modifier.size(64.dp)
-//                                )
+                                AsyncImage(
+                                    model = "https:${weather.weather.current.condition.icon}",
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp)
+                                )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
                                     Text(
