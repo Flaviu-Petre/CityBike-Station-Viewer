@@ -34,6 +34,4 @@ class CityBikeRepository @Inject constructor(
         val toDelete = FavoriteNetwork(networkId, name, city, country)
         dao.delete(toDelete)
     }
-
-//    fun isFavorite(id: String): Flow<Boolean> = dao.isFavorite(id)
 }

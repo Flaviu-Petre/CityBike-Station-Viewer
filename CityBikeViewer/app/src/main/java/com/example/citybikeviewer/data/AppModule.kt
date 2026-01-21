@@ -13,6 +13,8 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import com.example.citybikeviewer.data.remote.WeatherApi
+import com.example.citybikeviewer.data.WeatherRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,5 +48,15 @@ object AppModule {
     @Provides
     fun provideFavoriteDao(database: AppDatabase): FavoriteDao {
         return database.favoriteDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherApi(): WeatherApi {
+        return Retrofit.Builder()
+            .baseUrl("https://api.weatherapi.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(WeatherApi::class.java)
     }
 }

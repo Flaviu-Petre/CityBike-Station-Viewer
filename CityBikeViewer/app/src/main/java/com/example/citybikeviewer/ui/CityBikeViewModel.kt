@@ -14,12 +14,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.citybikeviewer.data.WeatherRepository
+import com.example.citybikeviewer.data.model.WeatherResponse
 
 @HiltViewModel
 class CityBikeViewModel @Inject constructor(
-    private val repository: CityBikeRepository
+    private val repository: CityBikeRepository,
+    private val weatherRepository: WeatherRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<CityBikeUiState>(CityBikeUiState.Loading)
+    private val _weatherState = MutableStateFlow<WeatherUiState>(WeatherUiState.Idle)
+    val weatherState: StateFlow<WeatherUiState> = _weatherState.asStateFlow()
 
     val uiState: StateFlow<CityBikeUiState> = _uiState.asStateFlow()
 
@@ -75,7 +80,17 @@ class CityBikeViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
 
-
+    fun fetchWeather(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            _weatherState.value = WeatherUiState.Loading
+            try {
+                val response = weatherRepository.getWeather(lat, lon)
+                _weatherState.value = WeatherUiState.Success(response)
+            } catch (e: Exception) {
+                _weatherState.value = WeatherUiState.Error("Weather N/A")
+            }
+        }
+    }
 
 }
 
