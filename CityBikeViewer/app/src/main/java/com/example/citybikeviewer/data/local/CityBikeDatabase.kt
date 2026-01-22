@@ -30,8 +30,6 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorites")
     fun getAllFavorites(): Flow<List<FavoriteNetwork>>
 
-//    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE id = :id)")
-//    fun isFavorite(id: String): Flow<Boolean>
 }
 
 @Database(entities = [FavoriteNetwork::class], version = 1)
